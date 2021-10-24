@@ -1,0 +1,51 @@
+import React, { useState, useEffect } from 'react';
+import { get } from './mockBackend/fetch';
+
+//Hook rules:
+//Only call Hooks at the top level (functions containing everyhting else)
+//Only call Hooks from React functions (so far useState and useEffect, search docs for custome hooks)
+
+export default function Shop() {
+  const [categories, setCategories] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [items, setItems] = useState({});
+
+
+    useEffect(() => {
+      get('/categories').then((response) => {
+        setCategories(response.data);
+      });
+      //only fetch categories data once.
+    }, []);
+
+    useEffect(() => {
+      if (selectedCategory && !items[selectedCategory]) {
+      get(`/items?category=${selectedCategory}`).then((response) => {
+        setItems((prev) => ({ ...prev, [selectedCategory]: response.data }));
+      });
+      }
+    }, [items, selectedCategory]);
+
+  if (!categories) {
+    return <p>Loading..</p>;
+  }
+
+  return (
+    <div className='App'>
+      <h1>Clothes 'n Things</h1>
+      <nav>
+        {categories.map((category) => (
+          <button key={category} onClick={() => setSelectedCategory(category)}>
+            {category}
+          </button>
+        ))}
+      </nav>
+      <h2>{selectedCategory}</h2>
+      <ul>
+        {!items[selectedCategory]
+          ? null
+          : items[selectedCategory].map((item) => <li key={item}>{item}</li>)}
+      </ul>
+    </div>
+  );
+}

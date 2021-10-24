@@ -17,7 +17,9 @@ export default function AppFunction() {
     setNewTask({});
   };
   const handleDelete = (taskIdToRemove) => {
-    setAllTasks((prev) => prev.filter((task) => task.id !== taskIdToRemove));
+    setAllTasks((prev) => prev.filter(
+      (task) => task.id !== taskIdToRemove
+    ));
   };
 
   return (
